@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="devexpress.wpf.core" Version="23.2.4" />
+    <ProjectReference Include="..\Server.Shared\Server.Shared.csproj" />
   </ItemGroup>
 
 </Project>
