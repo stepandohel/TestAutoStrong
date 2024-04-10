@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Data.Models;
-using WebAPI.Modeles;
+using WebAPI.Models;
 
 namespace WebAPI.Mapping
 {
@@ -8,9 +8,9 @@ namespace WebAPI.Mapping
     {
         public AppProfile()
         {
-            CreateMap<ItemCM, Item>()
+            CreateMap<ItemRequestModel, Item>()
                 .ForMember(x=>x.FilePath, opt => opt.MapFrom(x=>x.File.FileName));
-            CreateMap<Item, ItemCM>()
+            CreateMap<Item, ItemRequestModel>()
                 .ForMember(x => x.File, opt => opt.Ignore());
         }
     }

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Domain.Data.Models;
+using Domain.Migrations;
 using WebAPI.Managers.Interfaces;
-using WebAPI.Modeles;
+using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Services
@@ -21,9 +22,10 @@ namespace WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task SaveFile(ItemCM itemCM)
+        public async Task CreateItem(ItemRequestModel itemCM)
         {
-            //Вот это надо в сервис вынести
+            //FileService для работы с файлами
+            //Альтернативный путь для файлов
             string path = "/Files/" + itemCM.File.FileName;
             // сохраняем файл в папку Files в каталоге wwwroot
             using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
@@ -32,15 +34,10 @@ namespace WebAPI.Services
             }
 
             var item = _mapper.Map<Item>(itemCM);
-            //var item = new Item()
-            //{
-            //    Text = itemCM.Text,
-            //    FilePath = path
-            //};
             await _itemManager.CreateItem(item);
         }
 
-        public async Task<IEnumerable<ItemCM>> GetAllItems()
+        public async Task<IEnumerable<ItemResponseModel>> GetAllItems()
         {
             var items = await _itemManager.GetItems();
 
@@ -64,27 +61,25 @@ namespace WebAPI.Services
             //    //    };
             //    //}
             //});
-            var itemsCM = new List<ItemCM>();
+
+            //Запускать параллельно 
+            //Guid для имя файла
+            var itemsModels = new List<ItemResponseModel>();
 
             foreach (var item in items)
             {
                 string path = _appEnvironment.WebRootPath + "/Files/" + item.FilePath;
-                using (FileStream fstream = File.OpenRead(path))
+                var bytes = await File.ReadAllBytesAsync(path);
+                var newItemCM = new ItemResponseModel()
                 {
-                    var newItemCM = new ItemCM()
-                    {
-                        Text = item.Text,
-                    };
-                    var file = new FormFile(fstream, 0, fstream.Length, "file", item.FilePath);
-                    file.ContentDisposition = "attachment";
+                    Text = item.Text,
+                    FileContent = bytes
+                };
 
-                    newItemCM.File = file;
-                    itemsCM.Add(newItemCM);
-                }
+                itemsModels.Add(newItemCM);
             }
 
-
-            return itemsCM;
+            return itemsModels;
         }
     }
 }

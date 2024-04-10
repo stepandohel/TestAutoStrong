@@ -37,7 +37,7 @@ namespace WpfClientApp
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             var client = new HttpClient();
-            var requestUrl = ItemEndpoints.GetAllItemsRoute();
+            var requestUrl = ItemEndpoints.ControllerRoute;
             var response = await client.GetAsync(requestUrl);
         }
     }

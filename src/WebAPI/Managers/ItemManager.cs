@@ -17,12 +17,12 @@ namespace WebAPI.Managers
         public async Task CreateItem(Item item, CancellationToken ct = default)
         {
             _context.Items.Add(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
         }
 
         public async Task<ICollection<Item>> GetItems(CancellationToken ct = default)
         {
-            var items = await _context.Items.ToListAsync();
+            var items = await _context.Items.AsNoTracking().ToListAsync(ct);
             return items;
         }
     }
