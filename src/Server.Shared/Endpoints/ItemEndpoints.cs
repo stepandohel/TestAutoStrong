@@ -11,5 +11,11 @@
         {
             return $"https://localhost:7279/{ControllerRoute}/{CreateItem}";
         }
+
+        public const string GetAllItems = $"GetAllItems";
+        public static string GetAllItemsRoute()
+        {
+            return $"https://localhost:7279/{ControllerRoute}/{GetAllItems}";
+        }
     }
 }

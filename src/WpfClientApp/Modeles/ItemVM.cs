@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace WpfClientApp.Modeles
@@ -8,11 +7,8 @@ namespace WpfClientApp.Modeles
     public class ItemVM : INotifyPropertyChanged
     {
         public string Text { get; set; }
-        public string FileName { get; set; }
-        public byte[] FileContent { get; set; }
-
-        private ImageSource _bitmapImage { get; set; }
-        public ImageSource BitmapImage
+        private BitmapImage _bitmapImage { get; set; }
+        public BitmapImage BitmapImage
         {
             get
             {

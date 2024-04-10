@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using WpfClientApp.Endpoints;
 using WpfClientApp.Modeles;
 using Path = System.IO.Path;
@@ -30,7 +18,7 @@ namespace WpfClientApp.NewFolder
         public BitmapImage bitMapImg { get; set; }
         public string FileName { get; set; }
 
-        public ItemVM ItemVM { get; set; } = new() { Text=string.Empty };
+        public ItemVM ItemVM { get; set; } = new() { Text = string.Empty };
         public CreateItemForm()
         {
             InitializeComponent();
@@ -46,26 +34,15 @@ namespace WpfClientApp.NewFolder
             FileName = Path.GetFileName(FilePath);
 
             ItemVM.BitmapImage = new BitmapImage((new Uri(FilePath)));
-
-            //imgPreview.Source = bitMapImg;
-
-            //byte[] data;
-            //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-            //encoder.Frames.Add(BitmapFrame.Create(bitMapImg));
-            //using (MemoryStream ms = new MemoryStream())
-            //{
-            //    encoder.Save(ms);
-            //    data = ms.ToArray();
-            //}
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            string richText = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;
+            //string richText = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;
             //Получаю байты с картинки
             byte[] data;
             JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitMapImg));
+            encoder.Frames.Add(BitmapFrame.Create(ItemVM.BitmapImage));
             using (MemoryStream ms = new MemoryStream())
             {
                 encoder.Save(ms);
@@ -73,13 +50,11 @@ namespace WpfClientApp.NewFolder
             }
 
             var client = new HttpClient();
-            
+
             //К моделе по хорошему байндинг
             var item = new ItemVM()
             {
-                Text = "text",
-                FileName = FileName,
-                FileContent = data
+                Text = "text"
             };
 
             var stream = new MemoryStream(data);
@@ -92,11 +67,11 @@ namespace WpfClientApp.NewFolder
                 fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(MediaTypeNames.Application.Octet);
                 multipartFormContent.Add(fileStreamContent, "File", FileName);
 
-                    var folderIdContent = new StringContent("richText");
-                    multipartFormContent.Add(folderIdContent, "Text");
+                var folderIdContent = new StringContent(ItemVM.Text);
+                multipartFormContent.Add(folderIdContent, "Text");
 
                 var response = await client.PostAsync(requestUrl, multipartFormContent);
             }
-            }
+        }
     }
 }

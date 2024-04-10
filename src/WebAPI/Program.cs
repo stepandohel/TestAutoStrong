@@ -1,3 +1,9 @@
+using Domain.Data;
+using WebAPI.Managers;
+using WebAPI.Managers.Interfaces;
+using WebAPI.Mapping;
+using WebAPI.Services;
+using WebAPI.Services.Interfaces;
 
 namespace WebAPI
 {
@@ -8,8 +14,11 @@ namespace WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddDbContext<AppDBContext>();
             builder.Services.AddControllers();
+            builder.Services.AddTransient<IItemManager, ItemManager>();
+            builder.Services.AddTransient<IItemService, ItemService>();
+            builder.Services.AddAutoMapper(typeof(AppProfile));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

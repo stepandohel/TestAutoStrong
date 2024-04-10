@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using WebAPI.Modeles;
+using WebAPI.Services.Interfaces;
 using WpfClientApp.Endpoints;
 
 namespace WebAPI.Controllers
@@ -9,30 +10,25 @@ namespace WebAPI.Controllers
     [Route(ItemEndpoints.ControllerRoute)]
     public class FileController : ControllerBase
     {
-        IWebHostEnvironment _appEnvironment;
+        private readonly IItemService _itemService;
 
-        public FileController(IWebHostEnvironment appEnvironment)
+        public FileController(IItemService itemService)
         {
-            _appEnvironment = appEnvironment;
+            _itemService = itemService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetUserCatalogs(CancellationToken ct)
+        [HttpGet(ItemEndpoints.GetAllItems)]
+        public async Task<ActionResult> GetAllItems(CancellationToken ct)
         {
-            return Ok();
+            var items = await _itemService.GetAllItems();
+
+            return Ok(items);
         }
 
         [HttpPost(ItemEndpoints.CreateItem)]
         public async Task<ActionResult> CreateItem([FromForm] ItemCM item)
         {
-            //Вот это надо в сервис вынести
-            string path = "/Files/" + item.File.FileName;
-            // сохраняем файл в папку Files в каталоге wwwroot
-            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-            {
-                await item.File.CopyToAsync(fileStream);
-            }
-
+            await _itemService.SaveFile(item);
 
             return Ok();
         }

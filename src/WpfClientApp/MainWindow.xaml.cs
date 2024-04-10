@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfClientApp.Endpoints;
 using WpfClientApp.NewFolder;
 
 namespace WpfClientApp
@@ -30,6 +32,13 @@ namespace WpfClientApp
                 createForm.ShowDialog();
 
 
+        }
+
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var client = new HttpClient();
+            var requestUrl = ItemEndpoints.GetAllItemsRoute();
+            var response = await client.GetAsync(requestUrl);
         }
     }
 }
