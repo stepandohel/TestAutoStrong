@@ -6,6 +6,7 @@ namespace WpfClientApp.Modeles
 {
     public class ItemVM : INotifyPropertyChanged
     {
+        public int Id { get; set; }
         public string Text { get; set; }
         private BitmapImage _bitmapImage { get; set; }
         public BitmapImage BitmapImage

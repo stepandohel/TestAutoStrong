@@ -16,7 +16,8 @@ namespace WebAPI
             // Add services to the container.
             builder.Services.AddDbContext<AppDBContext>();
             builder.Services.AddControllers();
-            builder.Services.AddTransient<IItemManager, ItemManager>();
+            builder.Services.AddTransient<IItemRepository, ItemRepository>();
+            builder.Services.AddTransient<IFileService, FileService>();
             builder.Services.AddTransient<IItemService, ItemService>();
             builder.Services.AddAutoMapper(typeof(AppProfile));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

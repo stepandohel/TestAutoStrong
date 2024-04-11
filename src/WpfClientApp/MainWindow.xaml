@@ -4,11 +4,31 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfClientApp"
+        xmlns:commands="clr-namespace:WpfClientApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        Name="MainForm" Loaded="OnLoadAsync">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:EditCommand.Edit}" Executed="Edit_Handler"></CommandBinding>
+    </Window.CommandBindings>
     <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="112,297,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-        <Button Content="GEt" HorizontalAlignment="Left" Margin="653,370,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <ListView x:Name="ItemBox" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="5" HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="{Binding BitmapImage}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" />
+                        <TextBlock Text="{Binding Text}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        <Button Command="{x:Static local:EditCommand.Edit}" CommandParameter="{Binding Id}">Edit</Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Content="Create Item" HorizontalAlignment="Left" Margin="696,321,0,0" VerticalAlignment="Top" Click="Button_Click"/>
 
     </Grid>
 </Window>

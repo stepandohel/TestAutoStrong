@@ -2,9 +2,11 @@
 
 namespace WebAPI.Managers.Interfaces
 {
-    public interface IItemManager
+    public interface IItemRepository
     {
         Task CreateItem(Item item, CancellationToken ct = default);
         Task<ICollection<Item>> GetItems(CancellationToken ct = default);
+        Task<Item> GetItem(int id, CancellationToken ct = default);
+        Task DeleteItem(int id, CancellationToken ct = default);
     }
 }

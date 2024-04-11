@@ -12,7 +12,6 @@
         <Button Content="Send" HorizontalAlignment="Left" Margin="98,367,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
         <Button Content="Pick Img" HorizontalAlignment="Left" Margin="98,290,0,0" VerticalAlignment="Top" Click="Button_Click"/>
         <TextBox HorizontalAlignment="Left" Margin="98,324,0,0" TextWrapping="Wrap" Text="{Binding ElementName=createItemForm, Path=ItemVM.Text, Mode=TwoWay}" VerticalAlignment="Top" Width="169"/>
-        <Button Content="Button" HorizontalAlignment="Left" Height="20" Margin="418,290,0,0" VerticalAlignment="Top" Width="97" Click="Button_Click_2"/>
 
     </Grid>
 </Window>

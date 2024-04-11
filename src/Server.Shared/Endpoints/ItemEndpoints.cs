@@ -2,7 +2,7 @@
 {
     public class ItemEndpoints : BaseEndpoints
     {
-        private const string ControllerName = "file";
+        private const string ControllerName = "item";
         public const string ControllerRoute = $"{ApiRoute}/{ControllerName}";
 
 
