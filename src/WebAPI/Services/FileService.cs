@@ -22,11 +22,15 @@ namespace WebAPI.Services
         public async Task SaveFile(IFormFile file, string filePath)
         {
             string path = fileFolder + filePath;
-            // сохраняем файл в папку Files в каталоге wwwroot
             using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
             }
+        }
+
+        void IFileService.DeleteFile(string filePath)
+        {
+            File.Delete(_appEnvironment.WebRootPath + fileFolder + filePath);
         }
     }
 }

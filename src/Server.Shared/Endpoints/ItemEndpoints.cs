@@ -1,4 +1,4 @@
-﻿namespace WpfClientApp.Endpoints
+﻿namespace Server.Shared.Endpoints
 {
     public class ItemEndpoints : BaseEndpoints
     {

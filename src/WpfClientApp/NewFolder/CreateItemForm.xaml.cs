@@ -23,7 +23,12 @@ namespace WpfClientApp.NewFolder
             _items = items;
             if (itemVM != null)
             {
-                ItemVM = itemVM;
+                SubmitBtn.Click -= Button_Click_1;
+                SubmitBtn.Click += Update_Click;
+                //ItemVM = itemVM;
+                ItemVM.Id = itemVM.Id;
+                ItemVM.Text = itemVM.Text;
+                ItemVM.BitmapImage = itemVM.BitmapImage;
             }
         }
 
@@ -40,8 +45,20 @@ namespace WpfClientApp.NewFolder
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             var httpClient = new ItemHttpClient();
-            await httpClient.SendItem(ItemVM);
+            var createdItemId = await httpClient.SendItem(ItemVM);
+            ItemVM.Id = createdItemId;
             _items.Add(ItemVM);
+            this.Close();
+        }
+
+        private async void Update_Click(object sender, RoutedEventArgs e)
+        {
+            var httpClient = new ItemHttpClient();
+            var createdItemId = await httpClient.UpdateItem(ItemVM);
+
+            var itemFromSource = _items.First(x=>x.Id.Equals(ItemVM.Id));
+            itemFromSource.Text = ItemVM.Text;
+            itemFromSource.BitmapImage = ItemVM.BitmapImage;
             this.Close();
         }
     }

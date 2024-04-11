@@ -21,7 +21,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="{Binding BitmapImage}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" />
+                        <Image Source="{Binding BitmapImage, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="300" Width="300" />
                         <TextBlock Text="{Binding Text}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
                         <Button Command="{x:Static local:EditCommand.Edit}" CommandParameter="{Binding Id}">Edit</Button>
                     </StackPanel>

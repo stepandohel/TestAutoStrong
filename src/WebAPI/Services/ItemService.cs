@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Domain.Data.Models;
-using Domain.Migrations;
 using Server.Shared.Models;
 using WebAPI.Managers.Interfaces;
 using WebAPI.Models;
@@ -8,79 +7,109 @@ using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Services
 {
-    //В сервисах логика сохранения картинки на диск
     public class ItemService : IItemService
     {
-        private readonly IItemRepository _itemManager;
+        private readonly IItemRepository _itemRepository;
         private readonly IFileService _fileService;
         private readonly IMapper _mapper;
 
-        public ItemService(IItemRepository itemManager, IMapper mapper, IFileService fileService)
+        public ItemService(IItemRepository itemRepository, IMapper mapper, IFileService fileService)
         {
-            _itemManager = itemManager;
+            _itemRepository = itemRepository;
             _mapper = mapper;
             _fileService = fileService;
         }
 
-        public async Task CreateItem(ItemRequestModel itemRequestModel, CancellationToken ct = default)
+        public async Task<ItemResponseModel> CreateItem(ItemRequestModel itemRequestModel, CancellationToken ct = default)
         {
-            //Альтернативный путь для файлов
-            var fileGuid = Guid.NewGuid();
+            var fileNameGuid = Guid.NewGuid();
             var fileExtension = Path.GetExtension(itemRequestModel.File.FileName);
-            var filePath = fileGuid + fileExtension;
+            var newFileName = fileNameGuid + fileExtension;
 
-            await _fileService.SaveFile(itemRequestModel.File, filePath);
+            await _fileService.SaveFile(itemRequestModel.File, newFileName);
             var item = _mapper.Map<Item>(itemRequestModel);
-            item.FilePath = filePath;
-            await _itemManager.CreateItem(item, ct);
+            item.FilePath = newFileName;
+            await _itemRepository.CreateItem(item, ct);
+
+            return _mapper.Map<ItemResponseModel>(item);
         }
 
-        public async Task DeleteItem(int id, CancellationToken ct = default)
+        public async Task<bool> DeleteItem(int id, CancellationToken ct = default)
         {
-            await _itemManager.DeleteItem(id);
-            //Надо еще файл удалять
+            var deletedFilePath = await _itemRepository.DeleteItem(id);
+            if (deletedFilePath is null)
+            {
+                return false;
+            }
+
+            _fileService.DeleteFile(deletedFilePath);
+            return true;
         }
 
         public async Task<IEnumerable<ItemResponseModel>> GetAllItems(CancellationToken ct = default)
         {
-            var items = await _itemManager.GetItems(ct);
+            var items = await _itemRepository.GetItems(ct);
             var itemsModels = new List<ItemResponseModel>();
 
-            await Parallel.ForEachAsync(items, async (item, ct) =>
+            var tasks = items.Select(async x =>
+            {
+                var bytes = await _fileService.ReadFileBytes(x.FilePath);
+                var newItemCM = new ItemResponseModel()
                 {
-                    var bytes = await _fileService.ReadFileBytes(item.FilePath);
-                    var newItemCM = new ItemResponseModel()
-                    {
-                        Id = item.Id,
-                        Text = item.Text,
-                        FileContent = bytes
-                    };
+                    Id = x.Id,
+                    Text = x.Text,
+                    FileContent = bytes
+                };
+                itemsModels.Add(newItemCM);
+            });
 
-                    itemsModels.Add(newItemCM);
-                });
+            await Task.WhenAll(tasks);
 
-            //foreach (var item in items)
-            //{
-            //    var bytes = await _fileService.ReadFileBytes(item.FilePath);
-            //    var newItemCM = new ItemResponseModel()
+            //await Parallel.ForEachAsync(items, async (item, ct) =>
             //    {
-            //        Text = item.Text,
-            //        FileContent = bytes
-            //    };
+            //        var bytes = await _fileService.ReadFileBytes(item.FilePath);
+            //        var newItemCM = new ItemResponseModel()
+            //        {
+            //            Id = item.Id,
+            //            Text = item.Text,
+            //            FileContent = bytes
+            //        };
 
-            //    itemsModels.Add(newItemCM);
-            //}
+            //        itemsModels.Add(newItemCM);
+            //    });
 
             return itemsModels;
         }
 
         public async Task<ItemResponseModel> GetItem(int id, CancellationToken ct = default)
         {
-            var item = await _itemManager.GetItem(id, ct);
+            var item = await _itemRepository.GetItem(id, ct);
             var itemResponse = _mapper.Map<ItemResponseModel>(item);
+
             var bytes = await _fileService.ReadFileBytes(item.FilePath);
             itemResponse.FileContent = bytes;
+
             return itemResponse;
+        }
+
+        public async Task<ItemResponseModel> UpdateItem(int id, ItemRequestModel itemRequestModel, CancellationToken ct = default)
+        {
+            var fileNameGuid = Guid.NewGuid();
+            var fileExtension = Path.GetExtension(itemRequestModel.File.FileName);
+            var newFileName = fileNameGuid + fileExtension;
+
+            var newItem = _mapper.Map<Item>(itemRequestModel);
+            newItem.FilePath = newFileName;
+            var oldFilePath = await _itemRepository.UpdateItem(id, newItem);
+
+            if(oldFilePath is null)
+            {
+                return null;
+            }
+            _fileService.DeleteFile(oldFilePath);
+            _fileService.SaveFile(itemRequestModel.File, newFileName);
+
+            return _mapper.Map<ItemResponseModel>(newItem);
         }
     }
 }

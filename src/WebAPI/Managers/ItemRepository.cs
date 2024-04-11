@@ -20,33 +20,44 @@ namespace WebAPI.Managers
             await _context.SaveChangesAsync(ct);
         }
 
-        //asdsadsadsadasdsada
-        public async Task DeleteItem(int id, CancellationToken ct = default)
+        public async Task<string?> DeleteItem(int id, CancellationToken ct = default)
         {
             var item = await _context.Items.FindAsync(id);
 
-            if (item is not null)
+            if (item is null)
             {
-                _context.Items.Remove(item);
-                await _context.SaveChangesAsync(ct);
+                return null;
             }
+            _context.Items.Remove(item);
+            await _context.SaveChangesAsync(ct);
+
+            return item.FilePath;
         }
-        //!!!!!!!!!!!!!!!!!!!!!!!!
+
         public async Task<Item> GetItem(int id, CancellationToken ct = default)
         {
-            var item = await _context.Items.FindAsync(id);
-
-            if (item is not null)
-            {
-                return item;
-            }
-            return null;
+            return await _context.Items.FindAsync(id);
         }
 
         public async Task<ICollection<Item>> GetItems(CancellationToken ct = default)
         {
             var items = await _context.Items.AsNoTracking().ToListAsync(ct);
             return items;
+        }
+
+        public async Task<string?> UpdateItem(int id, Item newItem, CancellationToken ct = default)
+        {
+            var item = await _context.Items.FindAsync(id);
+            if (item is null)
+            {
+                return null;
+            }
+
+            item.Text = newItem.Text;
+            item.FilePath = newItem.FilePath;
+            await _context.SaveChangesAsync();
+
+            return item.FilePath;
         }
     }
 }

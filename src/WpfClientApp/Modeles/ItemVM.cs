@@ -6,9 +6,23 @@ namespace WpfClientApp.Modeles
 {
     public class ItemVM : INotifyPropertyChanged
     {
+        private string text;
+
         public int Id { get; set; }
-        public string Text { get; set; }
-        private BitmapImage _bitmapImage { get; set; }
+        public string Text
+        {
+            get
+            {
+                return text;
+            }
+            set
+            {
+                text = value;
+                OnPropertyChanged(nameof(Text));
+            }
+        }
+
+        private BitmapImage _bitmapImage;
         public BitmapImage BitmapImage
         {
             get
@@ -18,7 +32,7 @@ namespace WpfClientApp.Modeles
             set
             {
                 _bitmapImage = value;
-                OnPropertyChanged("BitmapImage");
+                OnPropertyChanged(nameof(BitmapImage));
             }
         }
 

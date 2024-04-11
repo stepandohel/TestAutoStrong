@@ -9,7 +9,7 @@
         Name="createItemForm">
     <Grid>
         <Image x:Name="imgPreview" Source="{Binding ElementName=createItemForm, Path=ItemVM.BitmapImage}" HorizontalAlignment="Left" Height="209" Margin="82,59,0,0" VerticalAlignment="Top" Width="210"/>
-        <Button Content="Send" HorizontalAlignment="Left" Margin="98,367,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <Button x:Name="SubmitBtn" Content="Submit" HorizontalAlignment="Left" Margin="98,367,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
         <Button Content="Pick Img" HorizontalAlignment="Left" Margin="98,290,0,0" VerticalAlignment="Top" Click="Button_Click"/>
         <TextBox HorizontalAlignment="Left" Margin="98,324,0,0" TextWrapping="Wrap" Text="{Binding ElementName=createItemForm, Path=ItemVM.Text, Mode=TwoWay}" VerticalAlignment="Top" Width="169"/>
 
