@@ -2,13 +2,10 @@
 
 namespace WpfClientApp
 {
-    public class EditCommand
+    public class CustomCommand
     {
-        public EditCommand()
-        {
-            Edit = new RoutedCommand("Edit", typeof(MainWindow));
-        }
         public static RoutedCommand Edit { get; set; } = new RoutedCommand("Edit", typeof(MainWindow));
+        public static RoutedCommand Delete { get; set;} = new RoutedCommand("Delete", typeof(MainWindow));
 
     }
 }

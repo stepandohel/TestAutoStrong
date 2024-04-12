@@ -5,7 +5,7 @@ namespace WebAPI.Validation
 {
     public class ItemValidator : AbstractValidator<ItemRequestModel>
     {
-        private readonly string[] allowedFileExtensions = [".jpg", ".jpeg", ".png", ".svg"];
+        private readonly string[] allowedFileExtensions = [".jpg", ".jpeg", ".png"];
         public ItemValidator()
         {
             RuleFor(x => x.Text).NotEmpty().WithMessage("Text must be filled");

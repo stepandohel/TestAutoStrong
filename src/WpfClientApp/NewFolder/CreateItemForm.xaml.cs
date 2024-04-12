@@ -25,7 +25,6 @@ namespace WpfClientApp.NewFolder
             {
                 SubmitBtn.Click -= Button_Click_1;
                 SubmitBtn.Click += Update_Click;
-                //ItemVM = itemVM;
                 ItemVM.Id = itemVM.Id;
                 ItemVM.Text = itemVM.Text;
                 ItemVM.BitmapImage = itemVM.BitmapImage;
@@ -35,11 +34,14 @@ namespace WpfClientApp.NewFolder
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.ShowDialog();
+            openFileDialog.Filter = "Image Files (JPG,PNG,JPEG)|*.JPG;*.PNG;*.jpeg";
 
-            var FilePath = openFileDialog.FileName;
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var FilePath = openFileDialog.FileName;
 
-            ItemVM.BitmapImage = new BitmapImage((new Uri(FilePath)));
+                ItemVM.BitmapImage = new BitmapImage((new Uri(FilePath)));
+            }
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
@@ -56,7 +58,7 @@ namespace WpfClientApp.NewFolder
             var httpClient = new ItemHttpClient();
             var createdItemId = await httpClient.UpdateItem(ItemVM);
 
-            var itemFromSource = _items.First(x=>x.Id.Equals(ItemVM.Id));
+            var itemFromSource = _items.First(x => x.Id.Equals(ItemVM.Id));
             itemFromSource.Text = ItemVM.Text;
             itemFromSource.BitmapImage = ItemVM.BitmapImage;
             this.Close();

@@ -52,12 +52,13 @@ namespace WebAPI.Managers
             {
                 return null;
             }
+            var oldFilePath = item.FilePath;
 
             item.Text = newItem.Text;
             item.FilePath = newItem.FilePath;
             await _context.SaveChangesAsync();
 
-            return item.FilePath;
+            return oldFilePath;
         }
     }
 }

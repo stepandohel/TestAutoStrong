@@ -35,10 +35,20 @@ namespace WpfClientApp
         private void Edit_Handler(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
             var itemId = (int)e.Parameter;
-            var itemForUpdate = _items[itemId-1];
+            var itemForUpdate = _items.First(x=>x.Id.Equals(itemId));
             var createForm = new CreateItemForm(_items, itemForUpdate);
 
             createForm.ShowDialog();
+        }
+
+        private async void Delete_Handler(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            var itemId = (int)e.Parameter;
+            var httpClient = new ItemHttpClient();
+            await httpClient.DeleteItem(itemId);
+
+            var itemForDelete = _items.First(x => x.Id.Equals(itemId));
+            _items.Remove(itemForDelete);
         }
     }
 }
