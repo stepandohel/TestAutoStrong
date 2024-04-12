@@ -55,7 +55,11 @@ namespace WebAPI.Managers
             var oldFilePath = item.FilePath;
 
             item.Text = newItem.Text;
-            item.FilePath = newItem.FilePath;
+            if (newItem.FilePath != default)
+            {
+                item.FilePath = newItem.FilePath;
+            }
+
             await _context.SaveChangesAsync();
 
             return oldFilePath;

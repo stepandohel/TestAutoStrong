@@ -14,7 +14,7 @@ namespace WpfClientApp
     public class ItemHttpClient
     {
         private readonly HttpClient _httpClient = new HttpClient { BaseAddress = new Uri(@"https://localhost:7279/") };
-     
+
         public async Task<int> SendItem(ItemVM item)
         {
             var data = GetBytesFromImage(item.BitmapImage);
@@ -35,13 +35,13 @@ namespace WpfClientApp
         public async Task<int> UpdateItem(ItemVM item)
         {
             var data = GetBytesFromImage(item.BitmapImage);
-            var fileName = Path.GetFileName(item.BitmapImage.UriSource.OriginalString);
+            var fileName = Path.GetFileName(item.BitmapImage.UriSource?.OriginalString);
             var requestUrl = $"{ItemEndpoints.ControllerRoute}/{item.Id}";
-            
+
             using (var formContent = CreateFormContent(data, fileName, item.Text))
             {
                 var response = await _httpClient.PutAsync(requestUrl, formContent);
-                
+
                 response.EnsureSuccessStatusCode();
                 var responseModel = await response.Content.ReadFromJsonAsync<ItemResponseModel>();
 
@@ -103,6 +103,11 @@ namespace WpfClientApp
 
         private MultipartFormDataContent CreateFormContent(byte[] fileContent, string fileName, string textContentString)
         {
+            //Не было времени написать нормальный обработчик на файлы, поэтому сделал так на случай если контент не меняется :((
+            if (fileName == null)
+            {
+                fileName = "old Path.jpg";
+            }
             var stream = new MemoryStream(fileContent);
             var multipartFormContent = new MultipartFormDataContent();
             var fileStreamContent = new StreamContent(stream);

@@ -94,20 +94,27 @@ namespace WebAPI.Services
 
         public async Task<ItemResponseModel> UpdateItem(int id, ItemRequestModel itemRequestModel, CancellationToken ct = default)
         {
-            var fileNameGuid = Guid.NewGuid();
-            var fileExtension = Path.GetExtension(itemRequestModel.File.FileName);
-            var newFileName = fileNameGuid + fileExtension;
-
             var newItem = _mapper.Map<Item>(itemRequestModel);
-            newItem.FilePath = newFileName;
+            string newFileName = string.Empty;
+            if (!itemRequestModel.File.FileName.Equals("old Path.jpg"))
+            {
+                var fileNameGuid = Guid.NewGuid();
+                var fileExtension = Path.GetExtension(itemRequestModel.File.FileName);
+                newFileName = fileNameGuid + fileExtension;
+                newItem.FilePath = newFileName;
+            }
+
             var oldFilePath = await _itemRepository.UpdateItem(id, newItem);
 
             if(oldFilePath is null)
             {
                 return null;
             }
-            _fileService.DeleteFile(oldFilePath);
-            _fileService.SaveFile(itemRequestModel.File, newFileName);
+            if(!newFileName.Equals(string.Empty)) 
+            {
+                _fileService.DeleteFile(oldFilePath);
+                _fileService.SaveFile(itemRequestModel.File, newFileName);
+            }
 
             return _mapper.Map<ItemResponseModel>(newItem);
         }
