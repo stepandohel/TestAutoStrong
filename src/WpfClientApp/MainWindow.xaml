@@ -1,0 +1,35 @@
+﻿<Window x:Class="WpfClientApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfClientApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        Name="MainForm" Loaded="OnLoadAsync">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:CustomCommand.Edit}" Executed="Edit_Handler"></CommandBinding>
+        <CommandBinding Command="{x:Static local:CustomCommand.Delete}" Executed="Delete_Handler"></CommandBinding>
+    </Window.CommandBindings>
+    <Grid>
+        <ListView x:Name="ItemBox" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="5" HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="{Binding BitmapImage, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="300" Width="300" />
+                        <TextBlock Text="{Binding Text}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        <Button Command="{x:Static local:CustomCommand.Edit}" CommandParameter="{Binding Id}">Edit</Button>
+                        <Button Command="{x:Static local:CustomCommand.Delete}" CommandParameter="{Binding Id}">Delete</Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Content="Create Item" HorizontalAlignment="Right" Margin="0,0,100,50" VerticalAlignment="Bottom" Click="Button_Click"/>
+
+    </Grid>
+</Window>
